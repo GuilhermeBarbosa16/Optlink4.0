@@ -16,14 +16,17 @@ function App() {
       <CssBaseline />
       <BrowserRouter>
         <Routes>
+          {/* Rotas que utilizam o Layout */}
           <Route element={<Layout />}>
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/cooperative" element={<Cooperative />} />
           </Route>
+          
+          {/* Rotas que não utilizam o Layout */}
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

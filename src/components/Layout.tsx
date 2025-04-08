@@ -62,7 +62,7 @@ const Layout: React.FC = () => {
         <AppBar position="fixed">
           <Toolbar>
             <Typography component="div" sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-              <img src={Logo} alt="Logo" style={{ width: '50px', height: 'auto' }} />
+              <img src={Logo} alt="Logo" style={{ width: '80px', height: 'auto' }} /> {/* Aumentando o tamanho do logo */}
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, gap: 2 }}>
               {navItems.map((item) => (
