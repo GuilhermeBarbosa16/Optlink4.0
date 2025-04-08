@@ -53,9 +53,14 @@ type ExpandedState = {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
+// Constantes para largura do drawer
+const drawerWidth = 240;
+const drawerCollapsedWidth = 56;
+
 const Reports: React.FC = () => {
   // Estados
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'pie'>('table');
   const [timeRange, setTimeRange] = useState('24H');
   const [expanded, setExpanded] = useState<ExpandedState>({
@@ -63,6 +68,11 @@ const Reports: React.FC = () => {
   });
   const [selectedItem, setSelectedItem] = useState('Disponibilidade Física');
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
+  // Handler para toggle do menu mobile
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   // Estilo personalizado para os itens do menu
   const MenuItemButton = styled(ListItemButton)(({ theme }) => ({
@@ -84,7 +94,7 @@ const Reports: React.FC = () => {
 
   const handleItemClick = (item: string) => {
     setSelectedItem(item);
-    if (isMobile) setSidebarOpen(false);
+    if (isMobile) setMobileOpen(false);
   };
 
   const handleViewModeChange = (event: SelectChangeEvent) => {
@@ -134,7 +144,7 @@ const Reports: React.FC = () => {
 
   const totalDisponibilidade = '100,0%';
 
-  // Componentes
+  // Componente Tooltip personalizado
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -174,38 +184,46 @@ const Reports: React.FC = () => {
       {/* Sidebar - Menu Lateral */}
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        open={isMobile ? mobileOpen : sidebarOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Melhor para mobile
+        }}
         sx={{
-          width: 240,
+          width: drawerWidth,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
-            width: 240,
+            width: drawerWidth,
             boxSizing: 'border-box',
             backgroundColor: '#f8f9fa',
             borderRight: '1px solid #e0e0e0',
             marginTop: '79px',
-            height: 'calc(100vh - 64px)'
+            height: 'calc(100vh - 79px)'
           },
           ...(!isMobile && !sidebarOpen && {
-            width: 56,
+            width: drawerCollapsedWidth,
             [`& .MuiDrawer-paper`]: {
-              width: 56,
+              width: drawerCollapsedWidth,
               overflowX: 'hidden',
-              marginTop: '64px',
-              height: 'calc(100vh - 64px)'
+              marginTop: '79px',
+              height: 'calc(100vh - 79px)'
+            }
+          }),
+          ...(isMobile && {
+            '& .MuiBackdrop-root': {
+              backgroundColor: 'rgba(0, 0, 0, 0.5)'
             }
           })
         }}
       >
         {/* Logo OPTLINK - versão compacta */}
         <Box sx={{
-          p: 2, // Reduzi o padding
+          p: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           borderBottom: '1px solid #e0e0e0',
-          height: '64px' // Altura fixa
+          height: '64px'
         }}>
           <Typography variant="h6" color="primary" fontWeight="bold">
             OPTLINK
@@ -216,12 +234,12 @@ const Reports: React.FC = () => {
         <List component="nav" sx={{
           py: 0,
           flexGrow: 1,
-          '& .MuiListItemButton-root': { // Estilo compacto para os itens
+          '& .MuiListItemButton-root': {
             minHeight: '48px',
             paddingTop: '6px',
             paddingBottom: '6px'
           },
-          '& .MuiListItemIcon-root': { // Ícones menores
+          '& .MuiListItemIcon-root': {
             minWidth: '36px'
           }
         }}>
@@ -233,13 +251,13 @@ const Reports: React.FC = () => {
               <ListItemIcon sx={{ minWidth: 36 }}>
                 <RelatoriosIcon fontSize="small" />
               </ListItemIcon>
-              {sidebarOpen && (
+              {(!isMobile || mobileOpen) && (
                 <>
                   <ListItemText
                     primary="Empresa"
                     primaryTypographyProps={{
                       fontWeight: 'medium',
-                      fontSize: '0.9rem' // Texto mais compacto
+                      fontSize: '0.9rem'
                     }}
                   />
                   {expanded.relatorios ? <ExpandLess /> : <ExpandMore />}
@@ -248,7 +266,7 @@ const Reports: React.FC = () => {
             </MenuItemButton>
           </ListItem>
 
-          <Collapse in={expanded.relatorios && sidebarOpen} timeout="auto" unmountOnExit>
+          <Collapse in={expanded.relatorios && (!isMobile || mobileOpen)} timeout="auto" unmountOnExit>
             <List component="div" disablePadding sx={{ bgcolor: '#fff' }}>
               {['Unidade 1', 'Unidade 2', 'Unidade 3'].map((text) => (
                 <ListItem
@@ -259,21 +277,21 @@ const Reports: React.FC = () => {
                     borderLeft: selectedItem === text ? '4px solid primary.main' : 'none'
                   }}
                 >
-                  <MuiTooltip title={!sidebarOpen ? text : ''} placement="right">
+                  <MuiTooltip title={(!sidebarOpen && !isMobile) ? text : ''} placement="right">
                     <MenuItemButton
                       onClick={() => handleItemClick(text)}
                       selected={selectedItem === text}
                       sx={{
-                        pl: 4, // Padding menor
-                        minHeight: '40px' // Altura reduzida
+                        pl: 4,
+                        minHeight: '40px'
                       }}
                     >
-                      {sidebarOpen && (
+                      {(!isMobile || mobileOpen) && (
                         <>
                           <ListItemText
                             primary={text}
                             primaryTypographyProps={{
-                              fontSize: '0.8rem', // Texto menor
+                              fontSize: '0.8rem',
                               fontWeight: selectedItem === text ? '500' : '400'
                             }}
                           />
@@ -289,52 +307,74 @@ const Reports: React.FC = () => {
         </List>
 
         {/* Rodapé compacto */}
-        <Box sx={{
-          p: 1, // Padding reduzido
-          textAlign: 'center',
-          color: 'text.secondary',
-          fontSize: '0.7rem', // Texto menor
-          borderTop: '1px solid #e0e0e0'
-        }}>
-          <Typography variant="caption">
-            Passe o mouse sobre os ícones para ver descrições
-          </Typography>
-        </Box>
+        {(!isMobile || mobileOpen) && (
+          <Box sx={{
+            p: 1,
+            textAlign: 'center',
+            color: 'text.secondary',
+            fontSize: '0.7rem',
+            borderTop: '1px solid #e0e0e0'
+          }}>
+            <Typography variant="caption">
+              Passe o mouse sobre os ícones para ver descrições
+            </Typography>
+          </Box>
+        )}
       </Drawer>
+
       {/* Main Content */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          width: `calc(100% - ${sidebarOpen ? 240 : 56}px)`,
-          marginLeft: `${sidebarOpen ? 20 : 20}px`,
-          transition: (theme) => theme.transitions.create(['width', 'margin'], {
+          p: isMobile ? 2 : 3,
+          width: {
+            xs: '100%', // Mobile: ocupa toda largura
+            sm: `calc(100% - ${drawerCollapsedWidth}px)`, // Tablet: desconta menu recolhido
+            md: `calc(100% - ${sidebarOpen ? drawerWidth : drawerCollapsedWidth}px)` // Desktop: ajusta conforme menu
+          },
+          marginTop: '79px', // Fixo conforme solicitado
+          transition: (theme) => theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
+            duration: theme.transitions.duration.leavingScreen,
           }),
-          ...(isMobile && {
-            width: '100%',
-            marginLeft: 0,
-          })
         }}
       >
+        {/* Título da Página */}
+        {isMobile && (
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
+            >
+              <Menu />
+            </IconButton>
+            <Typography variant="h6">
+              {selectedItem}
+            </Typography>
+          </Box>
+        )}
+
         {/* Filtros */}
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
           sx={{ mb: 3 }}
-          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          alignItems={{ xs: 'stretch', sm: 'center' }}
         >
           <ToggleButtonGroup
             value={timeRange}
             exclusive
             onChange={handleTimeRangeChange}
             size="small"
+            fullWidth={isMobile}
           >
-            <ToggleButton value="24H">24H</ToggleButton>
-            <ToggleButton value="7D">7D</ToggleButton>
-            <ToggleButton value="30D">30D</ToggleButton>
+            <ToggleButton value="24H" sx={{ flex: isMobile ? 1 : 'inherit' }}>24H</ToggleButton>
+            <ToggleButton value="7D" sx={{ flex: isMobile ? 1 : 'inherit' }}>7D</ToggleButton>
+            <ToggleButton value="30D" sx={{ flex: isMobile ? 1 : 'inherit' }}>30D</ToggleButton>
           </ToggleButtonGroup>
 
           <Select
@@ -342,6 +382,7 @@ const Reports: React.FC = () => {
             onChange={handleViewModeChange}
             size="small"
             sx={{ minWidth: 120 }}
+            fullWidth={isMobile}
           >
             <MenuItem value="table" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <TableChart fontSize="small" /> Tabela
@@ -355,6 +396,7 @@ const Reports: React.FC = () => {
             variant="contained"
             startIcon={<Download />}
             sx={{ whiteSpace: 'nowrap' }}
+            fullWidth={isMobile}
           >
             DOWNLOAD CSV
           </Button>
@@ -390,17 +432,6 @@ const Reports: React.FC = () => {
                     <TableCell>{item.quantidade}</TableCell>
                   </TableRow>
                 ))}
-                <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={totalDisponibilidade}
-                      color="success"
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>7</TableCell>
-                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
