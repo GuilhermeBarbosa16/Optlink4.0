@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Typography, Box, Paper, Button, IconButton, TextField, Collapse } from '@mui/material';
 import { Bell, MessageCircle, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import SunburstChart from '../components/SunburstChart';
+import SunburstLegend from '../components/SunburstLegend';
 
 // Tipos e interfaces
 interface NotificationCardProps {
@@ -209,6 +211,7 @@ const Dashboard: React.FC = () => {
   const [notificationsOpen, setNotificationsOpen] = useState<boolean>(true);
   const [mostrarHistorico, setMostrarHistorico] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<number[]>([1, 2]);
+  const [saudeSelecionada, setSaudeSelecionada] = useState<{ name?: string; value?: number }>({ name: 'Empresa', value: 82.9 });
 
   const historicoData: HistoricoData[] = [
     { name: 'Jan', value: 4000 },
@@ -222,6 +225,13 @@ const Dashboard: React.FC = () => {
 
   const dismissNotification = (id: number) => {
     setNotifications(prev => prev.filter(notificationId => notificationId !== id));
+  };
+
+  const handleNodeClick = (params: any) => {
+    setSaudeSelecionada({
+      name: params.data?.name || 'Empresa',
+      value: params.data?.value
+    });
   };
 
   return (
@@ -288,7 +298,28 @@ const Dashboard: React.FC = () => {
             }}>
               Saúde da Empresa
             </Typography>
-            
+          </Box>
+
+          {/* Sunburst e legenda lado a lado */}
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', mb: 2 }}>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <SunburstChart />
+            </Box>
+            <SunburstLegend />
+          </Box>
+
+          {/* Saúde do nível selecionado */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+            <Box sx={{ minWidth: 180, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Typography variant="subtitle2">Saúde do nível selecionado:</Typography>
+              <Typography variant="h6">
+                {saudeSelecionada && saudeSelecionada.value !== undefined ? `${saudeSelecionada.value}%` : 'Selecione um nível'}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Botão de histórico centralizado abaixo do gráfico */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
             <Button 
               variant="contained"
               onClick={() => setMostrarHistorico(!mostrarHistorico)}
@@ -307,6 +338,7 @@ const Dashboard: React.FC = () => {
             </Button>
           </Box>
 
+          {/* Histórico só aparece se mostrarHistorico for true */}
           {mostrarHistorico && (
             <Box sx={{ height: '300px', mt: 2 }}>
               <ResponsiveContainer width="100%" height="100%">
