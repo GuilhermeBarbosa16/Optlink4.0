@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -51,15 +51,27 @@ const theme = createTheme({
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual login logic
-    navigate('/dashboard');
+    try {
+      // TODO: Implement actual login logic with your API
+      // For now, we'll just simulate a successful login
+      const token = 'dummy-token'; // Replace with actual token from your API
+      localStorage.setItem('token', token);
+      
+      // Redirect to the page they tried to access, or dashboard if none
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Handle login error (show error message to user)
+    }
   };
 
   return (

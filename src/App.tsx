@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Notifications from './pages/Notifications';
 import Reports from './pages/Reports';
 import Cooperative from './pages/Cooperative';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -17,7 +18,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Rotas que utilizam o Layout */}
-          <Route element={<Layout />}>
+          <Route element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/reports" element={<Reports />} />
