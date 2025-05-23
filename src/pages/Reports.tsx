@@ -436,7 +436,10 @@ const Reports: React.FC = () => {
             </Table>
           </TableContainer>
         ) : (
-          <Paper sx={{ p: 3, height: { xs: '300px', sm: '400px', md: '500px' } }}>
+          <Paper sx={{ 
+            p: 3,
+            height: { xs: '500px', sm: '600px', md: '650px' }
+          }}>
             <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
               Distribuição da Disponibilidade por Ativo
             </Typography>
@@ -447,7 +450,7 @@ const Reports: React.FC = () => {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  outerRadius={80}
+                  outerRadius="45%"
                   fill="#8884d8"
                   dataKey="value"
                   animationDuration={500}
@@ -463,11 +466,19 @@ const Reports: React.FC = () => {
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
                 <Legend
-                  layout="vertical"
-                  verticalAlign="middle"
-                  align="right"
+                  layout="horizontal"
+                  verticalAlign="bottom"
+                  align="center"
+                  wrapperStyle={{
+                    paddingTop: '20px',
+                    fontSize: '14px'
+                  }}
                   formatter={(value, entry, index) => (
-                    <span style={{ fontSize: '14px', color: '#333' }}>
+                    <span style={{ 
+                      fontSize: '14px', 
+                      color: '#333',
+                      marginRight: '20px'
+                    }}>
                       {value} - {pieData[index].value}%
                     </span>
                   )}

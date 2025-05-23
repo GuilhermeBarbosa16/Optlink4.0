@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Search } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search, Menu } from 'lucide-react';
 import * as echarts from 'echarts'; // Assuming echarts is installed
 
 // Mock data structure - Simplified
@@ -68,11 +68,15 @@ function TreeNode({ label, children, level = 0, path = [], onUnitSelect }: TreeN
 }
 
 function Cooperative() {
-  // Removed tag selection state and handlers
   const [selectedUnit, setSelectedUnit] = useState<UnitName | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleUnitSelect = (unit: UnitName) => {
     setSelectedUnit(unit);
+    // Fecha o sidebar em dispositivos móveis quando uma unidade é selecionada
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
   };
 
   // Echarts setup
@@ -99,17 +103,27 @@ function Cooperative() {
       };
       myChart.setOption(option);
 
-      // Dispose chart on component unmount or unit change
+      // Responsive chart
+      const handleResize = () => {
+        myChart.resize();
+      };
+      window.addEventListener('resize', handleResize);
+
       return () => {
+        window.removeEventListener('resize', handleResize);
         myChart.dispose();
       };
     }
-  }, [selectedUnit]); // Rerun effect when selectedUnit changes
+  }, [selectedUnit]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg">
+      <div className={`
+        fixed md:relative w-64 bg-white shadow-lg h-full
+        transition-transform duration-300 ease-in-out z-20
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Estrutura</h2>
@@ -138,25 +152,31 @@ function Cooperative() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 w-full">
         <div className="mb-6">
-          <h1 className="text-xl font-semibold mb-4">
-            {selectedUnit ? `Dados da ${selectedUnit}` : 'Selecione uma Unidade'}
-          </h1>
-
-          {/* Removed Tag Selection UI */}
-
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-semibold">
+              {selectedUnit ? `Dados da ${selectedUnit}` : 'Selecione uma Unidade'}
+            </h1>
+            {/* Botão de menu para mobile */}
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            >
+              <Menu size={24} />
+            </button>
+          </div>
         </div>
 
         {/* Chart Area */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="h-96">
+          <div className="h-96 overflow-x-auto">
             {!selectedUnit ? (
               <div className="h-full flex items-center justify-center text-gray-500">
                 <p>Selecione uma unidade para exibir o gráfico</p>
               </div>
             ) : (
-              <div id="echarts-container" className="h-full w-full"></div>
+              <div id="echarts-container" className="h-full min-w-[800px]"></div>
             )}
           </div>
         </div>

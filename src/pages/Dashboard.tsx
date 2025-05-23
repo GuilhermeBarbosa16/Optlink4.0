@@ -142,26 +142,33 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <Box sx={{
-      width: open ? '320px' : '0',
+      width: { xs: '100%', md: open ? '320px' : '0' },
       backgroundColor: colors.sidebar,
       borderRight: `1px solid ${colors.border}`,
-      padding: open ? '24px' : '0',
-      paddingTop: '80px',
-      position: 'fixed',
+      padding: open ? { xs: '16px', md: '24px' } : '0',
+      paddingTop: { xs: '80px', md: '100px' },
+      position: { xs: 'fixed', md: 'fixed' },
       top: 0,
       left: 0,
       bottom: 0,
       overflowY: 'auto',
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      zIndex: 10,
-      visibility: open ? 'visible' : 'hidden'
+      zIndex: 1200,
+      visibility: open ? 'visible' : 'hidden',
+      transform: { xs: open ? 'translateX(0)' : 'translateX(-100%)', md: 'none' }
     }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        mb: { xs: 2, md: 3 } 
+      }}>
         <Typography variant="h6" sx={{ 
           color: colors.textPrimary,
           display: 'flex',
           alignItems: 'center',
-          gap: 1
+          gap: 1,
+          fontSize: { xs: '1rem', md: '1.25rem' }
         }}>
           <Bell size={20} color={colors.alert} />
           Notificações
@@ -177,7 +184,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           placeholder="Pesquisar..." 
           size="small" 
           sx={{ 
-            mb: 3,
+            mb: { xs: 2, md: 3 },
             '& .MuiOutlinedInput-root': {
               borderRadius: '8px',
               backgroundColor: colors.background
@@ -185,7 +192,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           }} 
         />
 
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 2 } }}>
           {notifications.map(notification => (
             <NotificationCard 
               key={notification.id}
@@ -234,9 +241,11 @@ const Dashboard: React.FC = () => {
   return (
     <Box sx={{ 
       display: 'flex', 
+      flexDirection: { xs: 'column', md: 'row' },
       minHeight: '100vh',
       position: 'relative',
-      backgroundColor: colors.background 
+      backgroundColor: colors.background,
+      overflow: 'hidden'
     }}>
       <Sidebar 
         open={sidebarOpen}
@@ -249,13 +258,14 @@ const Dashboard: React.FC = () => {
         onClick={() => setSidebarOpen(!sidebarOpen)}
         sx={{
           position: 'fixed',
-          left: sidebarOpen ? 300 : 12,
-          top: '50%',
-          zIndex: 1200,
+          left: { xs: '16px', md: sidebarOpen ? '320px' : '12px' },
+          top: { xs: '80px', md: '100px' },
+          transform: { xs: 'none', md: 'none' },
+          zIndex: 1300,
           backgroundColor: colors.section,
-          borderRadius: '0 8px 8px 0',
+          borderRadius: { xs: '8px', md: '0 8px 8px 0' },
           boxShadow: 2,
-          transition: 'left 0.3s ease',
+          transition: 'all 0.3s ease',
           '&:hover': {
             backgroundColor: colors.border
           }
@@ -266,58 +276,113 @@ const Dashboard: React.FC = () => {
 
       <Box component="main" sx={{ 
         flexGrow: 1,
-        p: 3,
-        pt: '80px',
-        ml: sidebarOpen ? '320px' : 0,
-        transition: 'margin-left 0.3s ease',
+        p: { xs: 1, sm: 2, md: 3 },
+        pt: { xs: '100px', md: '100px' },
+        ml: { xs: 0, md: sidebarOpen ? '320px' : 0 },
+        transition: 'all 0.3s ease',
         width: '100%',
-        maxWidth: sidebarOpen ? 'calc(100% - 320px)' : '100%'
+        maxWidth: { xs: '100%', md: sidebarOpen ? 'calc(100% - 320px)' : '100%' },
+        overflow: 'auto'
       }}>
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: { xs: 2, md: 4 } }}>
           <Typography variant="h4" sx={{ 
             fontWeight: 600,
-            color: colors.textPrimary
+            color: colors.textPrimary,
+            fontSize: { xs: '1.25rem', sm: '1.5rem', md: '2.125rem' }
           }}>
             Dashboard Corporativo
           </Typography>
         </Box>
 
         {/* Seção Saúde da Empresa */}
-        <Paper sx={cardStyles}>
+        <Paper sx={{
+          ...cardStyles,
+          overflow: 'hidden',
+          p: { xs: 1, sm: 2, md: 3 }
+        }}>
           <Box sx={{ 
             display: 'flex', 
             justifyContent: 'space-between',
             alignItems: 'center',
-            mb: 3
+            mb: { xs: 2, md: 3 }
           }}>
             <Typography variant="h5" sx={{ 
               color: colors.textPrimary,
-              fontWeight: 600
+              fontWeight: 600,
+              fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' }
             }}>
               Saúde da Empresa
             </Typography>
           </Box>
 
           {/* Sunburst e legenda lado a lado */}
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', mb: 2 }}>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box sx={{ 
+            width: '100%', 
+            display: 'flex', 
+            flexDirection: { xs: 'column', lg: 'row' },
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            gap: { xs: 2, md: 4 },
+            mb: { xs: 2, md: 4 }
+          }}>
+            <Box sx={{ 
+              flex: 1, 
+              minWidth: 0,
+              width: '100%',
+              height: { xs: '300px', sm: '400px', md: '500px', lg: '600px' },
+              position: 'relative',
+              '& .recharts-wrapper': {
+                width: '100% !important',
+                height: '100% !important'
+              }
+            }}>
               <SunburstChart />
             </Box>
-            <SunburstLegend />
+            <Box sx={{ 
+              width: { xs: '100%', lg: 'auto' },
+              minWidth: { lg: '250px' },
+              maxWidth: { xs: '100%', lg: '300px' },
+              order: { xs: -1, lg: 0 }
+            }}>
+              <SunburstLegend />
+            </Box>
           </Box>
 
           {/* Saúde do nível selecionado */}
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-            <Box sx={{ minWidth: 180, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Typography variant="subtitle2">Saúde do nível selecionado:</Typography>
-              <Typography variant="h6">
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            mb: { xs: 2, md: 4 },
+            flexWrap: 'wrap',
+            gap: 2
+          }}>
+            <Box sx={{ 
+              minWidth: { xs: '100%', sm: '180px' }, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              textAlign: 'center',
+              p: { xs: 1, md: 2 },
+              backgroundColor: colors.background,
+              borderRadius: '8px'
+            }}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>Saúde do nível selecionado:</Typography>
+              <Typography variant="h6" sx={{ 
+                fontSize: { xs: '1.1rem', md: '1.5rem' },
+                color: colors.textSecondary
+              }}>
                 {saudeSelecionada && saudeSelecionada.value !== undefined ? `${saudeSelecionada.value}%` : 'Selecione um nível'}
               </Typography>
             </Box>
           </Box>
 
           {/* Botão de histórico centralizado abaixo do gráfico */}
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            mt: { xs: 2, md: 4 },
+            width: '100%'
+          }}>
             <Button 
               variant="contained"
               onClick={() => setMostrarHistorico(!mostrarHistorico)}
@@ -326,7 +391,11 @@ const Dashboard: React.FC = () => {
                 color: 'white',
                 borderRadius: '8px',
                 textTransform: 'none',
-                px: 3,
+                px: { xs: 2, md: 3 },
+                py: { xs: 1, md: 1.5 },
+                width: { xs: '100%', sm: 'auto' },
+                minWidth: { xs: 'auto', sm: '200px' },
+                fontSize: { xs: '0.875rem', md: '1rem' },
                 '&:hover': {
                   backgroundColor: mostrarHistorico ? '#9a3c2f' : '#5c7a63'
                 }
@@ -338,35 +407,69 @@ const Dashboard: React.FC = () => {
 
           {/* Histórico só aparece se mostrarHistorico for true */}
           {mostrarHistorico && (
-            <Box sx={{ height: '300px', mt: 2 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={historicoData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
-                  <XAxis 
-                    dataKey="name" 
-                    tick={{ fill: colors.textPrimary }}
-                    axisLine={{ stroke: colors.border }}
-                  />
-                  <YAxis 
-                    tick={{ fill: colors.textPrimary }}
-                    axisLine={{ stroke: colors.border }}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: colors.background,
-                      borderColor: colors.border,
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke={colors.textSecondary} 
-                    fill={colors.section}
-                    fillOpacity={0.8}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+            <Box sx={{ 
+              mt: { xs: 2, md: 4 },
+              width: '100%',
+              position: 'relative',
+              overflowX: 'auto',
+              '&::-webkit-scrollbar': {
+                height: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                backgroundColor: colors.background,
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: colors.border,
+                borderRadius: '4px',
+                '&:hover': {
+                  backgroundColor: colors.textSecondary,
+                },
+              },
+            }}>
+              <Box sx={{ 
+                minWidth: '800px', // Largura mínima para garantir boa visualização
+                height: { xs: '250px', sm: '300px', md: '400px' },
+                position: 'relative',
+                '& .recharts-wrapper': {
+                  width: '100% !important',
+                  height: '100% !important'
+                }
+              }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={historicoData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fill: colors.textPrimary, fontSize: 12 }}
+                      axisLine={{ stroke: colors.border }}
+                      height={40}
+                      tickMargin={10}
+                    />
+                    <YAxis 
+                      tick={{ fill: colors.textPrimary, fontSize: 12 }}
+                      axisLine={{ stroke: colors.border }}
+                      width={40}
+                      tickMargin={10}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: colors.background,
+                        borderColor: colors.border,
+                        borderRadius: '8px',
+                        fontSize: '0.875rem'
+                      }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="value" 
+                      stroke={colors.textSecondary} 
+                      fill={colors.section}
+                      fillOpacity={0.8}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </Box>
             </Box>
           )}
         </Paper>
