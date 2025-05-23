@@ -153,54 +153,51 @@ const Sidebar: React.FC<SidebarProps> = ({
       bottom: 0,
       overflowY: 'auto',
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      zIndex: 10
+      zIndex: 10,
+      visibility: open ? 'visible' : 'hidden'
     }}>
-      {open && (
-        <>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-            <Typography variant="h6" sx={{ 
-              color: colors.textPrimary,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
-            }}>
-              <Bell size={20} color={colors.alert} />
-              Notificações
-            </Typography>
-            <IconButton onClick={toggleNotifications} size="small">
-              {notificationsOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-            </IconButton>
-          </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h6" sx={{ 
+          color: colors.textPrimary,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}>
+          <Bell size={20} color={colors.alert} />
+          Notificações
+        </Typography>
+        <IconButton onClick={toggleNotifications} size="small">
+          {notificationsOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+        </IconButton>
+      </Box>
 
-          <Collapse in={notificationsOpen}>
-            <TextField 
-              fullWidth 
-              placeholder="Pesquisar..." 
-              size="small" 
-              sx={{ 
-                mb: 3,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px',
-                  backgroundColor: colors.background
-                }
-              }} 
+      <Collapse in={notificationsOpen}>
+        <TextField 
+          fullWidth 
+          placeholder="Pesquisar..." 
+          size="small" 
+          sx={{ 
+            mb: 3,
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+              backgroundColor: colors.background
+            }
+          }} 
+        />
+
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          {notifications.map(notification => (
+            <NotificationCard 
+              key={notification.id}
+              title={notification.title}
+              code={notification.code}
+              firstOccurrence={notification.firstOccurrence}
+              lastOccurrence={notification.lastOccurrence}
+              onDismiss={() => dismissNotification(notification.id)}
             />
-
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              {notifications.map(notification => (
-                <NotificationCard 
-                  key={notification.id}
-                  title={notification.title}
-                  code={notification.code}
-                  firstOccurrence={notification.firstOccurrence}
-                  lastOccurrence={notification.lastOccurrence}
-                  onDismiss={() => dismissNotification(notification.id)}
-                />
-              ))}
-            </Box>
-          </Collapse>
-        </>
-      )}
+          ))}
+        </Box>
+      </Collapse>
     </Box>
   );
 };
@@ -273,7 +270,8 @@ const Dashboard: React.FC = () => {
         pt: '80px',
         ml: sidebarOpen ? '320px' : 0,
         transition: 'margin-left 0.3s ease',
-        width: sidebarOpen ? 'calc(100% - 320px)' : '100%'
+        width: '100%',
+        maxWidth: sidebarOpen ? 'calc(100% - 320px)' : '100%'
       }}>
         <Box sx={{ mb: 4 }}>
           <Typography variant="h4" sx={{ 

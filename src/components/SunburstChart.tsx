@@ -3,49 +3,47 @@ import ReactECharts from 'echarts-for-react';
 
 // Certifique-se de instalar: npm install echarts echarts-for-react
 
-// Função para cor fiel à legenda
-const getColorByValue = (value: number) => {
-  if (value === undefined || value === null) return '#999999'; // SEM DADOS
-  if (value >= 100) return '#274E13';
-  if (value >= 90) return '#38761D';
-  if (value >= 80) return '#6AA84F';
-  if (value >= 70) return '#93C47D';
-  if (value >= 60) return '#D9EAD3';
-  if (value >= 50) return '#FFF2CC';
-  if (value >= 40) return '#FFE599';
-  if (value >= 30) return '#FFD966';
-  if (value >= 20) return '#F6B26B';
-  if (value >= 10) return '#E06666';
-  if (value >= 0) return '#B85442';
-  return '#999999';
-};
-
-// Dados do exemplo fornecido
+// Data provided by the user
 const initialData = [
   {
     name: 'Grandpa',
     children: [
       {
         name: 'Uncle Leo',
-        value: 15,
+        value: 20,
         children: [
-          { name: 'Cousin Jack', value: 2 },
+          {
+            name: 'Cousin Jack',
+            value: 8
+          },
           {
             name: 'Cousin Mary',
             value: 5,
             children: [
-              { name: 'Jackson', value: 2 }
+              {
+                name: 'Jackson',
+                value: 2
+              }
             ]
           },
-          { name: 'Cousin Ben', value: 4 }
+          {
+            name: 'Cousin Ben',
+            value: 9
+          }
         ]
       },
       {
         name: 'Father',
         value: 10,
         children: [
-          { name: 'Me', value: 5 },
-          { name: 'Brother Peter', value: 1 }
+          {
+            name: 'Me',
+            value: 5
+          },
+          {
+            name: 'Brother Peter',
+            value: 9
+          }
         ]
       }
     ]
@@ -56,14 +54,21 @@ const initialData = [
       {
         name: 'Uncle Nike',
         children: [
-          { name: 'Cousin Betty', value: 1 },
-          { name: 'Cousin Jenny', value: 2 }
+          {
+            name: 'Cousin Betty',
+            value: 9
+          },
+          {
+            name: 'Cousin Jenny',
+            value: 2
+          }
         ]
       }
     ]
   }
 ];
 
+// Option provided by the user
 const option = {
   series: {
     type: 'sunburst',
